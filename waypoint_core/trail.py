@@ -2,19 +2,20 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 1 - The Trail Model (WP-102, WP-103)
+Part 1 - The Trail Model (WP-102, WP-103, WP-104)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
 This module defines the Trail class, representing a single hiking
-trail with a name, a Distance, elevation gain, and a difficulty
-rating that is validated on both creation and later changes.
+trail with a unique id, a name, a Distance, elevation gain, and a
+difficulty rating that is validated on both creation and later changes.
 It also provides an alternate constructor (from_dict) to build a
-Trail from a dictionary (e.g. API-shaped data), and a static
-validator for difficulty values.
+Trail from a dictionary (e.g. API-shaped data), a static validator
+for difficulty values, and equality comparison by id (used to
+de-duplicate trails coming from imports).
 
 Classes:
-    Trail (name, distance, elevation_gain_m, difficulty) : represents a trail
+    Trail (id, name, distance, elevation_gain_m, difficulty) : represents a trail
 
 Class variables:
     ALLOWED_DIFFICULTIES (list) : the only valid difficulty strings
@@ -26,27 +27,30 @@ Class methods:
     set_difficulty(new_difficulty)   : validates and updates difficulty
     from_dict(data)                  : classmethod, builds a Trail from a dict
     is_valid_difficulty(difficulty)  : staticmethod, checks a difficulty string
+    __eq__(other)                    : compares two Trails by id
 """
 
 from waypoint_core.distance import Distance
 
+
 class Trail:
     """
-    Represents a hiking trail with a name, distance, elevation gain, 
-    and difficulty rating.
+    Represents a hiking trail with an id, name, distance, elevation
+    gain, and difficulty rating.
     """
 
-    # Class variable : the only allowed difficulty value 
+    # Class variable: the only allowed difficulty values
     ALLOWED_DIFFICULTIES = ["easy", "moderate", "hard", "expert"]
 
     # Class variable: the platform's default distance unit for new trails
     # built through from_dict() when no unit is otherwise specified
     DEFAULT_UNIT = "km"
 
-    def __init__(self, name, distance, elevation_gain_m, difficulty):
+    def __init__(self, id, name, distance, elevation_gain_m, difficulty):
         """
         Constructor: creates a Trail object.
         Parameters:
+            id (int): the unique identifier for the trail
             name (str): the name of the trail
             distance (Distance): the distance of the trail
             elevation_gain_m (float): the elevation gain in meters
@@ -54,12 +58,12 @@ class Trail:
         Returns:
             None
         """
+        self.id = id
         self.name = name
         self._distance = distance
         self.elevation_gain_m = elevation_gain_m
         self._difficulty = None  # placeholder, real value set by set_difficulty below
         self.set_difficulty(difficulty)  # validate and set difficulty
-
 
     def set_difficulty(self, difficulty):
         """
@@ -78,8 +82,7 @@ class Trail:
     def difficulty(self):
         """
         Read-only property to access the difficulty rating of the trail.
-        Parameters:
-            None
+        Parameters: None
         Returns:
             str: the difficulty rating
         """
@@ -89,8 +92,7 @@ class Trail:
     def distance(self):
         """
         Read-only property to access the distance of the trail.
-        Parameters:
-            None
+        Parameters: None
         Returns:
             Distance: the distance object representing the trail's length
         """
@@ -103,15 +105,16 @@ class Trail:
         Uses DEFAULT_UNIT if no unit is provided in the data.
         Parameters:
             data (dict): expected keys -
-                        "name" (str), "distance_magnitude" (float),
-                        "distance_unit" (str, optional), "elevation_gain_m" (float),
-                        "difficulty" (str)
+                "id" (int), "name" (str), "distance_magnitude" (float),
+                "distance_unit" (str, optional), "elevation_gain_m" (float),
+                "difficulty" (str)
         Returns:
             Trail: a new Trail object built from the dict
         """
         unit = data.get("distance_unit", cls.DEFAULT_UNIT)
         distance = Distance(data["distance_magnitude"], unit)
-        return cls(data["name"], distance, data["elevation_gain_m"], data["difficulty"])
+        # NOTE: order here must match __init__'s parameter order exactly
+        return cls(data["id"], data["name"], distance, data["elevation_gain_m"], data["difficulty"])
 
     @staticmethod
     def is_valid_difficulty(difficulty):
@@ -124,4 +127,17 @@ class Trail:
         """
         return difficulty in Trail.ALLOWED_DIFFICULTIES
 
-
+    def __eq__(self, other):
+        """
+        Checks equality between two Trail objects based on their id.
+        Two trails with the same id are considered equal, even if other
+        fields differ - used to de-duplicate trails from imports.
+        Parameters:
+            other (object): the object to compare against
+        Returns:
+            bool: True if other is a Trail with the same id, False otherwise
+        """
+        # Guard: only compare against other Trail objects
+        if not isinstance(other, Trail):
+            return False
+        return self.id == other.id
