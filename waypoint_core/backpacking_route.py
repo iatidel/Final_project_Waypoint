@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 2 - Many Trail Types (WP-201, WP-203)
+Part 2 - Many Trail Types (WP-201, WP-203, WP-204)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -16,12 +16,17 @@ climbing with a loaded pack is more strenuous.
 BackpackingRoute does not add any new fields of its own - its
 __init__ simply delegates to Trail's constructor via super().
 
+BackpackingRoute also overrides packing_list() to EXTEND Trail's
+baseline gear list (via super()) with backpacking-specific items,
+rather than replacing it from scratch (WP-204).
+
 Classes:
     BackpackingRoute(id, name, distance, elevation_gain_m, difficulty)
 
 Class methods:
     estimated_time() : hours to complete, based on distance + elevation
     summary()         : one-line description of the route
+    packing_list()    : overridden - baseline gear PLUS backpacking gear
 """
 
 from waypoint_core.trail import Trail
@@ -81,3 +86,16 @@ class BackpackingRoute(Trail):
             str: summary text
         """
         return f"Backpacking Route: {self.name} ({self.distance.magnitude}{self.distance.unit}, {self.difficulty})"
+
+    def packing_list(self):
+        """
+        Extends Trail's baseline packing list with gear specific to
+        multi-day backpacking trips.
+        Parameters: None
+        Returns:
+            list[str]: baseline gear PLUS backpacking-specific gear
+        """
+        # Get the baseline list from Trail first, instead of rewriting it
+        base_items = super().packing_list()
+        # Add backpacking-specific gear on top
+        return base_items + ["tent", "sleeping bag", "camp stove"]

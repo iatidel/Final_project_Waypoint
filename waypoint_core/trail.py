@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201)
+Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201, WP-204)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -12,7 +12,8 @@ gain, and a validated difficulty rating. Trail cannot be instantiated
 directly - concrete subclasses (DayHike, BackpackingRoute, TrailRun,
 defined in other modules) must implement estimated_time() and
 summary(). Trail also provides an alternate constructor (from_dict),
-a static validator for difficulty values, and equality comparison by id.
+a static validator for difficulty values, equality comparison by id,
+and a baseline packing_list() that subclasses may extend via super().
 
 Classes:
     Trail (id, name, distance, elevation_gain_m, difficulty) : abstract base class
@@ -28,6 +29,7 @@ Class methods:
     from_dict(data)                  : classmethod, builds a Trail from a dict
     is_valid_difficulty(difficulty)  : staticmethod, checks a difficulty string
     __eq__(other)                    : compares two Trails by id
+    packing_list()                   : baseline gear list, overridable via super()
     estimated_time()                 : ABSTRACT - subclasses must implement
     summary()                        : ABSTRACT - subclasses must implement
 """
@@ -149,10 +151,23 @@ class Trail(ABC):
         if not isinstance(other, Trail):
             return False
         return self.id == other.id
+    
+    # New WP-204:  Baseline packing list - subclasses can override this 
+    # to add their  own gear on top using super(), instead of retyping 
+    # the whole list
+    def packing_list(self):
+        """
+          Returns the baseline gear every trail requires, regardless of type.
+          Subclasses may override this to ADD their own type-specific gear
+          on top of this baseline (see BackpackingRoute for an example).
+          Parameters: None
+          Returns:
+             list[str]: baseline packing items
+        """
+        return ["water", "map", "first aid kit"]
 
-    # NEW: abstract methods below - every concrete subclass MUST implement
+    # NEW WP-201: abstract methods below - every concrete subclass MUST implement
     # both, or Python will refuse to let that subclass be instantiated.
-
     @abstractmethod
     def estimated_time(self):
         """
