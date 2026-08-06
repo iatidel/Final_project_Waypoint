@@ -2,20 +2,27 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 1 - The Trail Model (WP-102, WP-103, WP-104)
+Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201, WP-204, WP-205)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
-This module defines the Trail class, representing a single hiking
-trail with a unique id, a name, a Distance, elevation gain, and a
-difficulty rating that is validated on both creation and later changes.
-It also provides an alternate constructor (from_dict) to build a
-Trail from a dictionary (e.g. API-shaped data), a static validator
-for difficulty values, and equality comparison by id (used to
-de-duplicate trails coming from imports).
+This module defines the Trail abstract base class, representing the
+shared shape of every hiking trail: an id, name, Distance, elevation
+gain, and a validated difficulty rating. Trail cannot be instantiated
+directly - concrete subclasses (DayHike, BackpackingRoute, TrailRun,
+defined in other modules) must implement estimated_time() and
+summary(). Trail also provides an alternate constructor (from_dict),
+a static validator for difficulty values, equality comparison by id,
+and a baseline packing_list() that subclasses may extend via super().
+
+__init__ ends with a call to super().__init__() so that, when Trail
+is combined with mixins via multiple inheritance (see mixins.py and
+rated_backpacking_route.py), the MRO chain continues past Trail
+instead of stopping there - otherwise any mixin __init__ that comes
+after Trail in the MRO would never run.
 
 Classes:
-    Trail (id, name, distance, elevation_gain_m, difficulty) : represents a trail
+    Trail (id, name, distance, elevation_gain_m, difficulty) : abstract base class
 
 Class variables:
     ALLOWED_DIFFICULTIES (list) : the only valid difficulty strings
@@ -28,15 +35,22 @@ Class methods:
     from_dict(data)                  : classmethod, builds a Trail from a dict
     is_valid_difficulty(difficulty)  : staticmethod, checks a difficulty string
     __eq__(other)                    : compares two Trails by id
+    packing_list()                   : baseline gear list, overridable via super()
+    estimated_time()                 : ABSTRACT - subclasses must implement
+    summary()                        : ABSTRACT - subclasses must implement
 """
 
+# NEW: needed to make Trail an abstract base class
+from abc import ABC, abstractmethod
 from waypoint_core.distance import Distance
 
 
-class Trail:
+# CHANGED: Trail now inherits from ABC instead of nothing
+class Trail(ABC):
     """
-    Represents a hiking trail with an id, name, distance, elevation
-    gain, and difficulty rating.
+    Abstract base class representing a hiking trail. Cannot be
+    instantiated directly - every concrete subclass must implement
+    estimated_time() and summary().
     """
 
     # Class variable: the only allowed difficulty values
@@ -48,7 +62,9 @@ class Trail:
 
     def __init__(self, id, name, distance, elevation_gain_m, difficulty):
         """
-        Constructor: creates a Trail object.
+        Constructor: creates a Trail object. Only ever called via a
+        subclass, since Trail itself is abstract and cannot be
+        instantiated directly.
         Parameters:
             id (int): the unique identifier for the trail
             name (str): the name of the trail
@@ -64,6 +80,9 @@ class Trail:
         self.elevation_gain_m = elevation_gain_m
         self._difficulty = None  # placeholder, real value set by set_difficulty below
         self.set_difficulty(difficulty)  # validate and set difficulty
+        # New WP-205:  call super().__init__() so that any mixins that come 
+        # after Trail in the MRO get initialized too
+        super().__init__()  # continue the MRO chain so mixins after Trail still get initialized
 
     def set_difficulty(self, difficulty):
         """
@@ -101,15 +120,15 @@ class Trail:
     @classmethod
     def from_dict(cls, data):
         """
-        Alternate constructor: builds a Trail from an API-shaped dict.
-        Uses DEFAULT_UNIT if no unit is provided in the data.
+        Alternate constructor: builds a Trail (subclass) from an
+        API-shaped dict. Uses DEFAULT_UNIT if no unit is provided.
         Parameters:
             data (dict): expected keys -
                 "id" (int), "name" (str), "distance_magnitude" (float),
                 "distance_unit" (str, optional), "elevation_gain_m" (float),
                 "difficulty" (str)
         Returns:
-            Trail: a new Trail object built from the dict
+            Trail: a new Trail subclass object built from the dict
         """
         unit = data.get("distance_unit", cls.DEFAULT_UNIT)
         distance = Distance(data["distance_magnitude"], unit)
@@ -141,3 +160,41 @@ class Trail:
         if not isinstance(other, Trail):
             return False
         return self.id == other.id
+    
+    # New WP-204:  Baseline packing list - subclasses can override this 
+    # to add their  own gear on top using super(), instead of retyping 
+    # the whole list
+    def packing_list(self):
+        """
+          Returns the baseline gear every trail requires, regardless of type.
+          Subclasses may override this to ADD their own type-specific gear
+          on top of this baseline (see BackpackingRoute for an example).
+          Parameters: None
+          Returns:
+             list[str]: baseline packing items
+        """
+        return ["water", "map", "first aid kit"]
+
+    # NEW WP-201: abstract methods below - every concrete subclass MUST implement
+    # both, or Python will refuse to let that subclass be instantiated.
+    @abstractmethod
+    def estimated_time(self):
+        """
+        Returns the estimated time to complete this trail, in hours.
+        Each subclass paces this differently (WP-202, WP-203, WP-204).
+        Parameters: None
+        Returns:
+            float: estimated hours to complete the trail
+        """
+        pass
+
+    @abstractmethod
+    def summary(self):
+        """
+        Returns a short human-readable description of this trail.
+        Each subclass formats this differently.
+        Parameters: None
+        Returns:
+            str: a one-line summary
+        """
+        pass

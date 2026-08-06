@@ -1,6 +1,6 @@
 from waypoint_core.trail import Trail
 from waypoint_core.distance import Distance
-
+"""
 d = Distance(5, "km")
 t = Trail(1, "Test Trail", d, 100, "moderate")
 print(t.name, t.distance.magnitude, t.difficulty)
@@ -19,3 +19,10 @@ t3 = Trail(1, "Renamed Trail", d, 999, "easy")   # same id as t, different every
 print(t == t3)   # expect True - same id
 print(t == t2)   # expect False - different id
 print(t == "not a trail")  # expect False - not even a Trail
+"""
+#Abstract class test WEEK 08
+# Proof that Trail is now abstract and cannot be instantiated directly
+try:
+    t = Trail(99, "Should Fail", Distance(5, "km"), 100, "easy")
+except TypeError as e:
+    print(f"Correctly blocked: {e}")
