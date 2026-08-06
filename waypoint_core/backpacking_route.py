@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 2 - Many Trail Types (WP-201)
+Part 2 - Many Trail Types (WP-201, WP-203)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -12,6 +12,9 @@ design, adapted from DayHike's approach): walks at 2.5 km/h - slower
 than a day hike since carrying a full pack - plus 1 extra hour for
 every 400m of elevation gain, a steeper penalty than DayHike since
 climbing with a loaded pack is more strenuous.
+
+BackpackingRoute does not add any new fields of its own - its
+__init__ simply delegates to Trail's constructor via super().
 
 Classes:
     BackpackingRoute(id, name, distance, elevation_gain_m, difficulty)
@@ -33,6 +36,21 @@ class BackpackingRoute(Trail):
     A multi-day backpacking route. Concrete Trail subclass implementing
     estimated_time() and summary().
     """
+    def __init__(self, id, name, distance, elevation_gain_m, difficulty):
+            """
+              Constructor: creates a BackpackingRoute. Delegates all setup to Trail's
+              constructor via super() - BackpackingRoute doesn't add any new fields.
+              Parameters:
+                  id (int): the unique identifier for the trail
+                  name (str): the name of the trail
+                  distance (Distance): the distance of the trail
+                  elevation_gain_m (float): the elevation gain in meters
+                  difficulty (str): the difficulty rating
+              Returns:
+                 None
+            """
+            super().__init__(id, name, distance, elevation_gain_m, difficulty)
+    
 
     def estimated_time(self):
         """
