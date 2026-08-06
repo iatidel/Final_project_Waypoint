@@ -2,20 +2,20 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 1 - The Trail Model (WP-102, WP-103, WP-104)
+Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
-This module defines the Trail class, representing a single hiking
-trail with a unique id, a name, a Distance, elevation gain, and a
-difficulty rating that is validated on both creation and later changes.
-It also provides an alternate constructor (from_dict) to build a
-Trail from a dictionary (e.g. API-shaped data), a static validator
-for difficulty values, and equality comparison by id (used to
-de-duplicate trails coming from imports).
+This module defines the Trail abstract base class, representing the
+shared shape of every hiking trail: an id, name, Distance, elevation
+gain, and a validated difficulty rating. Trail cannot be instantiated
+directly - concrete subclasses (DayHike, BackpackingRoute, TrailRun,
+defined in other modules) must implement estimated_time() and
+summary(). Trail also provides an alternate constructor (from_dict),
+a static validator for difficulty values, and equality comparison by id.
 
 Classes:
-    Trail (id, name, distance, elevation_gain_m, difficulty) : represents a trail
+    Trail (id, name, distance, elevation_gain_m, difficulty) : abstract base class
 
 Class variables:
     ALLOWED_DIFFICULTIES (list) : the only valid difficulty strings
@@ -28,15 +28,21 @@ Class methods:
     from_dict(data)                  : classmethod, builds a Trail from a dict
     is_valid_difficulty(difficulty)  : staticmethod, checks a difficulty string
     __eq__(other)                    : compares two Trails by id
+    estimated_time()                 : ABSTRACT - subclasses must implement
+    summary()                        : ABSTRACT - subclasses must implement
 """
 
+# NEW: needed to make Trail an abstract base class
+from abc import ABC, abstractmethod
 from waypoint_core.distance import Distance
 
 
-class Trail:
+# CHANGED: Trail now inherits from ABC instead of nothing
+class Trail(ABC):
     """
-    Represents a hiking trail with an id, name, distance, elevation
-    gain, and difficulty rating.
+    Abstract base class representing a hiking trail. Cannot be
+    instantiated directly - every concrete subclass must implement
+    estimated_time() and summary().
     """
 
     # Class variable: the only allowed difficulty values
@@ -48,7 +54,9 @@ class Trail:
 
     def __init__(self, id, name, distance, elevation_gain_m, difficulty):
         """
-        Constructor: creates a Trail object.
+        Constructor: creates a Trail object. Only ever called via a
+        subclass, since Trail itself is abstract and cannot be
+        instantiated directly.
         Parameters:
             id (int): the unique identifier for the trail
             name (str): the name of the trail
@@ -101,15 +109,15 @@ class Trail:
     @classmethod
     def from_dict(cls, data):
         """
-        Alternate constructor: builds a Trail from an API-shaped dict.
-        Uses DEFAULT_UNIT if no unit is provided in the data.
+        Alternate constructor: builds a Trail (subclass) from an
+        API-shaped dict. Uses DEFAULT_UNIT if no unit is provided.
         Parameters:
             data (dict): expected keys -
                 "id" (int), "name" (str), "distance_magnitude" (float),
                 "distance_unit" (str, optional), "elevation_gain_m" (float),
                 "difficulty" (str)
         Returns:
-            Trail: a new Trail object built from the dict
+            Trail: a new Trail subclass object built from the dict
         """
         unit = data.get("distance_unit", cls.DEFAULT_UNIT)
         distance = Distance(data["distance_magnitude"], unit)
@@ -141,3 +149,28 @@ class Trail:
         if not isinstance(other, Trail):
             return False
         return self.id == other.id
+
+    # NEW: abstract methods below - every concrete subclass MUST implement
+    # both, or Python will refuse to let that subclass be instantiated.
+
+    @abstractmethod
+    def estimated_time(self):
+        """
+        Returns the estimated time to complete this trail, in hours.
+        Each subclass paces this differently (WP-202, WP-203, WP-204).
+        Parameters: None
+        Returns:
+            float: estimated hours to complete the trail
+        """
+        pass
+
+    @abstractmethod
+    def summary(self):
+        """
+        Returns a short human-readable description of this trail.
+        Each subclass formats this differently.
+        Parameters: None
+        Returns:
+            str: a one-line summary
+        """
+        pass
