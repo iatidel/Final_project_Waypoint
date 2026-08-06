@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Domain Engine
-Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201, WP-204)
+Part 1/2 - The Trail Model + Hierarchy (WP-102, WP-103, WP-104, WP-201, WP-204, WP-205)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -14,6 +14,12 @@ defined in other modules) must implement estimated_time() and
 summary(). Trail also provides an alternate constructor (from_dict),
 a static validator for difficulty values, equality comparison by id,
 and a baseline packing_list() that subclasses may extend via super().
+
+__init__ ends with a call to super().__init__() so that, when Trail
+is combined with mixins via multiple inheritance (see mixins.py and
+rated_backpacking_route.py), the MRO chain continues past Trail
+instead of stopping there - otherwise any mixin __init__ that comes
+after Trail in the MRO would never run.
 
 Classes:
     Trail (id, name, distance, elevation_gain_m, difficulty) : abstract base class
@@ -74,6 +80,9 @@ class Trail(ABC):
         self.elevation_gain_m = elevation_gain_m
         self._difficulty = None  # placeholder, real value set by set_difficulty below
         self.set_difficulty(difficulty)  # validate and set difficulty
+        # New WP-205:  call super().__init__() so that any mixins that come 
+        # after Trail in the MRO get initialized too
+        super().__init__()  # continue the MRO chain so mixins after Trail still get initialized
 
     def set_difficulty(self, difficulty):
         """
