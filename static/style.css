@@ -9,3 +9,53 @@ body {
 h1 {
     color: #2e7d32;
 }
+
+/* Navbar styling */
+nav {
+    background-color: #2e7d32;
+    padding: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+
+/* Catalog table styling */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #2e7d32;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
