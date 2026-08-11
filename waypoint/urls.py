@@ -13,12 +13,19 @@ and calls the matching view.
 
 from django.contrib import admin
 from django.urls import path
-# our views.py, containing home()
-from waypoint import views 
+from waypoint import views  # our views.py, containing home(), report(), search()
 
 urlpatterns = [
+
     # Django's built-in admin panel
-    path('admin/', admin.site.urls),   
-    # empty string = the site's root URL ("/")
-    path('', views.home, name='home'),    
+    path('admin/', admin.site.urls), 
+
+    # empty string = the site's root URL ("/")                  
+    path('', views.home, name='home'), 
+
+    # /report/ - GET shows form, POST handles submission                 
+    path('report/', views.report, name='report'), 
+
+    # /search/?q=... - reads q safely via .get()      
+    path('search/', views.search, name='search'),       
 ]
