@@ -1,12 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Search - Waypoint</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Search - Waypoint{% endblock %}
+
+{% block content %}
     <h1>Search Trails</h1>
 
     <form method="GET">
@@ -19,5 +15,4 @@
     {% else %}
         <p>No search query yet.</p>
     {% endif %}
-</body>
-</html>
+{% endblock %}
