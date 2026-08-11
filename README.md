@@ -8,7 +8,8 @@ pure-Python domain engine (Weeks 7-8), then a Django web app around it
 Week 7 complete (tagged `w7`) — domain engine finished (Distance, Trail, Itinerary).
 Week 8 complete (tagged `v8`) — trail hierarchy, operator overloading, mixins, polymorphism.
 Week 9 complete (tagged `v9`) — Django project set up (venv, Django 4.2, dev server verified).
-Week 10 starting — homepage and trail report form.
+Week 10 complete (tagged `v10`) — homepage, trail-report form with CSRF protection, search view.
+Week 11 starting — trail catalog page.
 
 ## Project structure
 - `waypoint_core/` — pure-Python domain classes
@@ -19,7 +20,15 @@ Week 10 starting — homepage and trail report form.
   - `mixins.py` — ElevationMixin, RatingMixin
   - `rated_backpacking_route.py` — composed class using both mixins
   - `itinerary.py` — Itinerary (ordered trail list, total distance)
-- `test_*.py` — manual test scripts, one per feature/ticket
+- `waypoint/` — Django project settings and configuration
+  - `settings.py` — project configuration (apps, database, templates, static files)
+  - `urls.py` — maps URLs to views
+  - `views.py` — view functions (home, report, search)
+- `templates/` — HTML templates (home.html, report.html, thank_you.html, search.html)
+- `static/` — CSS (style.css)
+- `manage.py` — Django's command-line entry point (runserver, migrate, etc.)
+- `requirements.txt` — pinned dependencies for a fresh install
+- `test_*.py` — manual test scripts for waypoint_core, one per feature/ticket
 
 ## Running the project
 
