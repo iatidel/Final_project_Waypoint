@@ -1,22 +1,31 @@
 """
-URL configuration for waypoint project.
+Application Programming CCGC 5003  Summer 2026
+Humber College Institute of Technology and Advanced Learning
+Waypoint - Web App
+Part 3/4 - Pages and Forms (WP-405)
+Developed by (IATIDEL AKIK N10038365)
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+Description:
+This module maps every URL in the site to the view function that
+should handle it. Django checks each path() in order, top to bottom,
+and calls the matching view.
 """
+
 from django.contrib import admin
 from django.urls import path
+from waypoint import views  # our views.py, containing home(), report(), search()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+
+    # Django's built-in admin panel
+    path('admin/', admin.site.urls), 
+
+    # empty string = the site's root URL ("/")                  
+    path('', views.home, name='home'), 
+
+    # /report/ - GET shows form, POST handles submission                 
+    path('report/', views.report, name='report'), 
+
+    # /search/?q=... - reads q safely via .get()      
+    path('search/', views.search, name='search'),       
 ]
