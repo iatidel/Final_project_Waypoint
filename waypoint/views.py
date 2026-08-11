@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Web App
-Part 3/4 - Pages and Forms (WP-402, WP-403, WP-404)
+Part 3/4/5 - Pages, Forms, and Catalog (WP-402, WP-403, WP-404, WP-503)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -10,14 +10,22 @@ This module defines the views for the Waypoint site - the Python
 functions that handle incoming requests and decide what page (template)
 to send back, and what data (context) that page should display.
 
+catalog() supplies the trail data as plain dicts for now; the template
+(catalog.html) handles all display logic - CLOSED/HARD badges (WP-504)
+and the floatformat filter on distance (WP-505) - so no changes were
+needed here for those two tickets.
+
 Functions:
-    home(request)   : renders the homepage, greeting the visitor by name
-    report(request) : GET shows a blank trail-report form; POST reads
-                       the submitted data and renders a personalized
-                       thank-you page
-    search(request) : safely reads the "q" query parameter and renders
-                       the search results page, defaulting to "" if
-                       no query was provided
+    home(request)    : renders the homepage, greeting the visitor by name
+    report(request)  : GET shows a blank trail-report form; POST reads
+                        the submitted data and renders a personalized
+                        thank-you page
+    search(request)  : safely reads the "q" query parameter and renders
+                        the search results page, defaulting to "" if
+                        no query was provided
+    catalog(request) : renders the trail catalog - a list of trail dicts
+                        looped into a table (name, distance, elevation,
+                        difficulty, is_open)
 """
 
 # render() builds an HttpResponse from a template + data
@@ -78,3 +86,24 @@ def search(request):
 
     context = {"query": query}
     return render(request, "search.html", context)
+
+def catalog(request):
+    """
+    Renders the trail catalog: a list of trails as plain dicts.
+    Parameters:
+        request (HttpRequest): the incoming request object
+    Returns:
+        HttpResponse: the rendered catalog page
+    """
+    # Six trail dicts - name, distance (km), elevation (m), difficulty, is_open
+    trails = [
+        {"name": "Lakeshore Trail", "distance": 5.567, "elevation": 120, "difficulty": "easy", "is_open": True},
+        {"name": "Green Forest Path", "distance": 9.2, "elevation": 400, "difficulty": "moderate", "is_open": True},
+        {"name": "Bear Ridge Summit", "distance": 18.0, "elevation": 950, "difficulty": "expert", "is_open": True},
+        {"name": "Riverside Loop", "distance": 4.3, "elevation": 80, "difficulty": "easy", "is_open": False},
+        {"name": "White Bridge Trail", "distance": 14.7, "elevation": 1100, "difficulty": "expert", "is_open": False},
+        {"name": "Maple Grove Walk", "distance": 3.0, "elevation": 60, "difficulty": "easy", "is_open": True},
+    ]
+
+    context = {"trails": trails}
+    return render(request, "catalog.html", context)

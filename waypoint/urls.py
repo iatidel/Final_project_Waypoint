@@ -2,7 +2,7 @@
 Application Programming CCGC 5003  Summer 2026
 Humber College Institute of Technology and Advanced Learning
 Waypoint - Web App
-Part 3/4 - Pages and Forms (WP-405)
+Part 3/4/5 - Pages, Forms, and Catalog (WP-405, WP-503)
 Developed by (IATIDEL AKIK N10038365)
 
 Description:
@@ -27,5 +27,8 @@ urlpatterns = [
     path('report/', views.report, name='report'), 
 
     # /search/?q=... - reads q safely via .get()      
-    path('search/', views.search, name='search'),       
+    path('search/', views.search, name='search'), 
+
+    # /catalog/ - lists all trails in a table
+    path('catalog/', views.catalog, name='catalog'),  
 ]
