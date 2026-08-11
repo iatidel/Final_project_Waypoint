@@ -9,7 +9,8 @@ Week 7 complete (tagged `w7`) — domain engine finished (Distance, Trail, Itine
 Week 8 complete (tagged `v8`) — trail hierarchy, operator overloading, mixins, polymorphism.
 Week 9 complete (tagged `v9`) — Django project set up (venv, Django 4.2, dev server verified).
 Week 10 complete (tagged `v10`) — homepage, trail-report form with CSRF protection, search view.
-Week 11 starting — trail catalog page.
+Week 11 complete (tagged `v11`) — shared base layout, trail catalog with badges and filters.
+Week 12 starting — database models, ORM, admin panel.
 
 ## Project structure
 - `waypoint_core/` — pure-Python domain classes
@@ -23,8 +24,9 @@ Week 11 starting — trail catalog page.
 - `waypoint/` — Django project settings and configuration
   - `settings.py` — project configuration (apps, database, templates, static files)
   - `urls.py` — maps URLs to views
-  - `views.py` — view functions (home, report, search)
-- `templates/` — HTML templates (home.html, report.html, thank_you.html, search.html)
+  - `views.py` — view functions (home, report, search, catalog)
+- `templates/` — HTML templates (base.html, home.html, report.html, thank_you.html, search.html, catalog.html)
+  - `partials/` — navbar.html, footer.html (included via `{% include %}`)
 - `static/` — CSS (style.css)
 - `manage.py` — Django's command-line entry point (runserver, migrate, etc.)
 - `requirements.txt` — pinned dependencies for a fresh install
