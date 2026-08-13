@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'trails',  # our new app, for trail-related models/views
 ]
 
 MIDDLEWARE = [
