@@ -11,7 +11,8 @@ Week 9 complete (tagged `v9`) — Django project set up (venv, Django 4.2, dev s
 Week 10 complete (tagged `v10`) — homepage, trail-report form with CSRF protection, search view.
 Week 11 complete (tagged `v11`) — shared base layout, trail catalog with badges and filters.
 Week 12 complete (tagged `v12`) — Trail model, migrations, admin panel, database-backed catalog at /trails/.
-Week 13 starting — Park model and relationships.
+Week 13 complete (tagged `v13`) — Park model, ForeignKey relationship (Trail→Park, SET_NULL), relation surfaced in admin/catalog, cross-relation query.
+Week 14 starting — testing and final polish.
 
 ## Project structure
 - `waypoint_core/` — pure-Python domain classes
@@ -27,11 +28,11 @@ Week 13 starting — Park model and relationships.
   - `urls.py` — maps URLs to views
   - `views.py` — view functions (home, report, search, catalog)
 - `trails/` — Django app for trail data (WP-601+)
-  - `models.py` — Trail model (name, distance_km, elevation_gain, difficulty, is_open, added)
-  - `admin.py` — TrailAdmin registration (list_display, search_fields)
-  - `views.py` — catalog() view, queries open trails from the database
+  - `models.py` — Trail model, Park model, ForeignKey (Trail→Park, on_delete=SET_NULL)
+  - `admin.py` — TrailAdmin and ParkAdmin registration
+  - `views.py` — catalog() (all open trails), trails_by_park() (cross-relation query)
   - `urls.py` — trails app routes, mounted at /trails/ via include()
-  - `migrations/` — database migration files (0001_initial.py creates the Trail table)
+  - `migrations/` — 0001_initial.py (Trail table), 0002_park_trail_park.py (Park table + FK)
 - `templates/` — HTML templates (base.html, home.html, report.html, thank_you.html, search.html, catalog.html)
   - `partials/` — navbar.html, footer.html (included via `{% include %}`)
 - `static/` — CSS (style.css)

@@ -12,6 +12,7 @@
                 <th>Name</th>
                 <th>Distance (km)</th>
                 <th>Elevation (m)</th>
+                <th>Park</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
                 <td>{{ trail.name }}</td>
                 <td>{{ trail.distance_km|floatformat:1 }}</td>
                 <td>{{ trail.elevation_gain }}</td>
+                <td>{{ trail.park.name|default:"Unassigned" }}</td>
                 <td>
                     {% if not trail.is_open %}
                         CLOSED
