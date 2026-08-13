@@ -15,5 +15,8 @@ from . import views
 
 urlpatterns = [
     # /trails/ - lists open trails from the database
-    path('', views.catalog, name='trail_catalog'),  
+    path('', views.catalog, name='trail_catalog'), 
+
+    # /trails/park/<id>/ - cross-relation query, only that park's open trails
+    path('park/<int:park_id>/', views.trails_by_park, name='trails_by_park'),
 ]
