@@ -10,7 +10,8 @@ Week 8 complete (tagged `v8`) — trail hierarchy, operator overloading, mixins,
 Week 9 complete (tagged `v9`) — Django project set up (venv, Django 4.2, dev server verified).
 Week 10 complete (tagged `v10`) — homepage, trail-report form with CSRF protection, search view.
 Week 11 complete (tagged `v11`) — shared base layout, trail catalog with badges and filters.
-Week 12 starting — database models, ORM, admin panel.
+Week 12 complete (tagged `v12`) — Trail model, migrations, admin panel, database-backed catalog at /trails/.
+Week 13 starting — Park model and relationships.
 
 ## Project structure
 - `waypoint_core/` — pure-Python domain classes
@@ -25,6 +26,12 @@ Week 12 starting — database models, ORM, admin panel.
   - `settings.py` — project configuration (apps, database, templates, static files)
   - `urls.py` — maps URLs to views
   - `views.py` — view functions (home, report, search, catalog)
+- `trails/` — Django app for trail data (WP-601+)
+  - `models.py` — Trail model (name, distance_km, elevation_gain, difficulty, is_open, added)
+  - `admin.py` — TrailAdmin registration (list_display, search_fields)
+  - `views.py` — catalog() view, queries open trails from the database
+  - `urls.py` — trails app routes, mounted at /trails/ via include()
+  - `migrations/` — database migration files (0001_initial.py creates the Trail table)
 - `templates/` — HTML templates (base.html, home.html, report.html, thank_you.html, search.html, catalog.html)
   - `partials/` — navbar.html, footer.html (included via `{% include %}`)
 - `static/` — CSS (style.css)
@@ -35,8 +42,8 @@ Week 12 starting — database models, ORM, admin panel.
 ## Running the project
 
 1. Clone the repo and `cd` into it.
-2. Create and activate a virtual environment:
-  python -m venv env
+2. 2. Create and activate a virtual environment (requires **Python 3.12** - Django 4.2 is incompatible with Python 3.14):
+  py-3.12-m venv env
       Windows: `env\Scripts\Activate.ps1`
       Mac/Linux: `source env/bin/activate`
 3. Install dependencies:
